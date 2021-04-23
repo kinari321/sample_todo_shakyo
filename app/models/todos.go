@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
-type Todo struct{
-	ID     	    int
-	Content		string
-	UserID   	int
-	CreatedAt   time.Time
+type Todo struct {
+	ID        int
+	Content   string
+	UserID    int
+	CreatedAt time.Time
 }
 
 func (u *User) CreateTodo(content string) (err error) {
@@ -18,10 +18,10 @@ func (u *User) CreateTodo(content string) (err error) {
 		user_id,
 		created_at) values (?, ?, ?)`
 
-		_, err = Db.Exec(cmd, content, u.ID, time.Now())
-		if err != nil {
-			log.Fatalln(err)
-		}
+	_, err = Db.Exec(cmd, content, u.ID, time.Now())
+	if err != nil {
+		log.Fatalln(err)
+	}
 	return err
 }
 
@@ -45,7 +45,7 @@ func GetTodos() (todos []Todo, err error) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	for  rows.Next(){
+	for rows.Next() {
 		var todo Todo
 		err = rows.Scan(&todo.ID,
 			&todo.Content,
@@ -61,8 +61,7 @@ func GetTodos() (todos []Todo, err error) {
 	return todos, err
 }
 
-
-func (u * User) GetTodoByUser() (todos []Todo, err error) {
+func (u *User) GetTodosByUser() (todos []Todo, err error) {
 	cmd := `select id, content, user_id, created_at from todos
 	where user_id = ?`
 
@@ -77,7 +76,8 @@ func (u * User) GetTodoByUser() (todos []Todo, err error) {
 			&todo.Content,
 			&todo.UserID,
 			&todo.CreatedAt)
-		if err != nil{
+
+		if err != nil {
 			log.Fatalln(err)
 		}
 		todos = append(todos, todo)
@@ -87,22 +87,21 @@ func (u * User) GetTodoByUser() (todos []Todo, err error) {
 	return todos, err
 }
 
-func (t *Todo) UpdateTodo() error{
-	cmd := `update todos set content = ?, user_id =  ?
+func (t *Todo) UpdateTodo() error {
+	cmd := `update todos set content = ?, user_id = ?
 	where id = ?`
 	_, err = Db.Exec(cmd, t.Content, t.UserID, t.ID)
-	if err != nil{
-		 log.Fatalln(err)
+	if err != nil {
+		log.Fatalln(err)
 	}
 	return err
 }
 
-
-func (t *Todo) DeleteTodo() error{
+func (t *Todo) DeleteTodo() error {
 	cmd := `delete from todos where id = ?`
 	_, err = Db.Exec(cmd, t.ID)
-	if err != nil{
-		 log.Fatalln(err)
+	if err != nil {
+		log.Fatalln(err)
 	}
 	return err
 }
